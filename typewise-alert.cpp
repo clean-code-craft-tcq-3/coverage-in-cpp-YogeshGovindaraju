@@ -1,71 +1,54 @@
 #include "typewise-alert.h"
-#include <stdio.h>
 
-BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
-  if(value < lowerLimit) {
-    return TOO_LOW;
-  }
-  if(value > upperLimit) {
-    return TOO_HIGH;
-  }
-  return NORMAL;
+TypewiseAlert::TypewiseAlert(AlertTarget *alertTarget, CoolingType *coolingType, double temperatureInCelsius)
+{
+    this->alertTarget = alertTarget;
+    this->coolingType = coolingType;
+    coolingType->updateLimit();
+    inferBreach(temperatureInCelsius);
+    alertTarget->sendAlert(getBreachType());
 }
 
-BreachType classifyTemperatureBreach(
-    CoolingType coolingType, double temperatureInC) {
-  int lowerLimit = 0;
-  int upperLimit = 0;
-  switch(coolingType) {
-    case PASSIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 35;
-      break;
-    case HI_ACTIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 45;
-      break;
-    case MED_ACTIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 40;
-      break;
-  }
-  return inferBreach(temperatureInC, lowerLimit, upperLimit);
+TypewiseAlert::~TypewiseAlert()
+{
+    delete alertTarget;
+    delete coolingType;
 }
 
-void checkAndAlert(
-    AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC) {
-
-  BreachType breachType = classifyTemperatureBreach(
-    batteryChar.coolingType, temperatureInC
-  );
-
-  switch(alertTarget) {
-    case TO_CONTROLLER:
-      sendToController(breachType);
-      break;
-    case TO_EMAIL:
-      sendToEmail(breachType);
-      break;
-  }
+AlertTarget* TypewiseAlert::getAlertTargetInstance()
+{
+    return alertTarget;
 }
 
-void sendToController(BreachType breachType) {
-  const unsigned short header = 0xfeed;
-  printf("%x : %x\n", header, breachType);
+void TypewiseAlert::setBreachType(BreachType breachType)
+{
+    this->breachType = breachType;
 }
 
-void sendToEmail(BreachType breachType) {
-  const char* recepient = "a.b@c.com";
-  switch(breachType) {
-    case TOO_LOW:
-      printf("To: %s\n", recepient);
-      printf("Hi, the temperature is too low\n");
-      break;
-    case TOO_HIGH:
-      printf("To: %s\n", recepient);
-      printf("Hi, the temperature is too high\n");
-      break;
-    case NORMAL:
-      break;
-  }
+BreachType TypewiseAlert::getBreachType()
+{
+    return breachType;
+}
+
+void TypewiseAlert::inferBreach(double temperatureInCelsius)
+{
+    setBreachType(NORMAL);
+    updateBreachForLowerLimit(temperatureInCelsius);
+    updateBreachForUpperLimit(temperatureInCelsius);
+}
+
+void TypewiseAlert::updateBreachForLowerLimit(double temperatureInCelsius)
+{
+    if(temperatureInCelsius < coolingType->getLowerLimit())
+    {
+        setBreachType(TOO_LOW);
+    }
+}
+
+void TypewiseAlert::updateBreachForUpperLimit(double temperatureInCelsius)
+{
+    if(temperatureInCelsius > coolingType->getUpperLimit())
+    {
+        setBreachType(TOO_HIGH);
+    }
 }
