@@ -51,9 +51,9 @@ class EmailAlert : public AlertTarget
     {
         const char* recepient = "a.b@c.com";
         BreachAlertList breachAlertList;
-        breachAlertList.insert({TOO_LOW, sendTooLowAlert});
-        breachAlertList.insert({TOO_HIGH, sendTooHighAlert});
-        breachAlertList.insert({NORMAL, sendNormalBreachStatus});
+        breachAlertList.insert({TOO_LOW, &EmailAlert::sendTooLowAlert});
+        breachAlertList.insert({TOO_HIGH, &EmailAlert::sendTooHighAlert});
+        breachAlertList.insert({NORMAL, &EmailAlert::sendNormalBreachStatus});
         BreachAlertList::const_iterator breachIterator = breachAlertList.find(breachType);
         assert(breachIterator != breachAlertList.end());
         (this->*(BreachAlert(breachIterator).sendEmailAlert))(recepient);
