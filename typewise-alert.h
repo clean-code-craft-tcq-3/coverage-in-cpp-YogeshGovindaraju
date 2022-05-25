@@ -25,7 +25,6 @@ class TypewiseAlert
     
     public:
     TypewiseAlert(AlertTarget *alertTarget, CoolingType *coolingType, double temperatureInCelsius);
-    ~TypewiseAlert();
     AlertTarget* getAlertTargetInstance();
     void setBreachType(BreachType breachType);
     BreachType getBreachType();

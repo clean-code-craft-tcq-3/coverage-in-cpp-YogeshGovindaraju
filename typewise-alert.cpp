@@ -9,12 +9,6 @@ TypewiseAlert::TypewiseAlert(AlertTarget *alertTarget, CoolingType *coolingType,
     alertTarget->sendAlert(getBreachType());
 }
 
-TypewiseAlert::~TypewiseAlert()
-{
-    delete alertTarget;
-    delete coolingType;
-}
-
 AlertTarget* TypewiseAlert::getAlertTargetInstance()
 {
     return alertTarget;

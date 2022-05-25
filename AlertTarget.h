@@ -19,7 +19,6 @@ class AlertTarget
     AlertAcknowledgement alertAcknowledgement;
     
     public:
-    virtual ~AlertTarget(){}
     virtual void sendAlert(BreachType) = 0;
     
     void setAlertAcknowledgement(AlertAcknowledgement alertAcknowledgement)
@@ -46,14 +45,24 @@ class ControllerAlert : public AlertTarget
 
 class EmailAlert : public AlertTarget
 {
+    BreachAlertList breachAlertList;
+    
     public:
-    void sendAlert(BreachType breachType)
+    EmailAlert()
     {
-        const char* recepient = "a.b@c.com";
-        BreachAlertList breachAlertList;
+        populateBreachAlertType();
+    }
+    
+    void populateBreachAlertType()
+    {
         breachAlertList.insert({TOO_LOW, &EmailAlert::sendTooLowAlert});
         breachAlertList.insert({TOO_HIGH, &EmailAlert::sendTooHighAlert});
         breachAlertList.insert({NORMAL, &EmailAlert::sendNormalBreachStatus});
+    }
+    
+    void sendAlert(BreachType breachType)
+    {
+        const char* recepient = "a.b@c.com";
         BreachAlertList::const_iterator breachIterator = breachAlertList.find(breachType);
         assert(breachIterator != breachAlertList.end());
         (this->*(BreachAlert(breachIterator).sendEmailAlert))(recepient);

@@ -13,8 +13,6 @@ class CoolingType
         upperLimit = 0;
     }
     
-    virtual ~CoolingType(){}
-    
     void setLowerLimit(int limit)
     {
         lowerLimit = limit;
