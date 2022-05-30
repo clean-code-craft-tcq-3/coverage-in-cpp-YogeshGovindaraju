@@ -22,11 +22,11 @@ class TypewiseAlert
     AlertTarget *alertTarget;
     CoolingType *coolingType;
     BreachType breachType;
+    void setBreachType(BreachType breachType);
     
     public:
     TypewiseAlert(AlertTarget *alertTarget, CoolingType *coolingType, double temperatureInCelsius);
     AlertTarget* getAlertTargetInstance();
-    void setBreachType(BreachType breachType);
     BreachType getBreachType();
     void inferBreach(double temperatureInCelsius);
     void updateBreachForLowerLimit(double temperatureInCelsius);
